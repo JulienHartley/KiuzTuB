@@ -46,7 +46,7 @@ All responses are anonymous.
 st.button("Continue")
 
 # === Load Images ===
-image_dir = "images"
+image_dir = "Images"
 image_files1 = [f"panel{i}.png" for i in range(1, 8)]
 image_files2 = ["panel8.png", "panel9.png"]
 image_files3 = ["panel8_manipulated.png", "panel9_manipulated.png"]
@@ -59,7 +59,7 @@ st.markdown("---")
 
 # === Loop through each image ===
 for image_file in final_images:
-    st.image(os.path.join(image_dir, image_file), use_column_width=True)
+    st.image(os.path.join(image_dir, image_file))
     st.button("Continue")
 
 answer = st.radio(f"What do you think happens next?")
