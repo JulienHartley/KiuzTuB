@@ -18,7 +18,8 @@ if not submit:
     st.stop()
 
 # === decide on test type - if even numbered participant then test type = original ===
-with open("participant.txt", "r", encoding="utf-8") as in_f:
+participant_file = "participant.txt"
+with open(participant_file, "r", encoding="utf-8") as in_f:
     try:
         participant = int(in_f.readline())
     except ValueError:
