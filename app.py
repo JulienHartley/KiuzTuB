@@ -19,6 +19,8 @@ with st.form("participant_form"):
 if not submit:
     st.stop()
 
+test = 0
+
 # === Assign test type randomly (simulate counter logic) ===
 testtype = random.choice(["Original", "Updated"])
 st.session_state["testtype"] = testtype
