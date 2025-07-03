@@ -18,7 +18,7 @@ if not submit:
     st.stop()
 
 # === decide on test type - if even numbered participant then test type = original ===
-with open("participant.txt", "r") as in_f:
+with open("participant.txt", "r", encoding="utf-8") as in_f:
     try:
         participant = int(in_f.readline())
     except ValueError:
@@ -39,7 +39,7 @@ st.success(f"🧪 You have been assigned to the **{testtype}** condition.")
 st.markdown("---")
 st.write("""
 Welcome to our experiment!  
-You’ll view a sequence of comic panels and answer a few questions.  
+You’ll view a sequence of comic panels and answer two questions.  
 All responses are anonymous.  
 """)
 st.button("Continue")
@@ -54,13 +54,16 @@ final_images = image_files1 + (image_files2 if testtype == "Original" else image
 responses = []
 
 st.markdown("---")
-st.write("### Please view each panel and answer the question")
+# st.write("### Please view each panel and answer the question")
 
 # === Loop through each image ===
 for image_file in final_images:
     st.image(os.path.join(image_dir, image_file), use_column_width=True)
-    answer = st.radio(f"What do you think of {image_file}?", ["Interesting", "Confusing", "Neutral"], key=image_file)
-    responses.append({"image": image_file, "response": answer})
+    st.button("Continue")
+
+answer = st.radio(f"What do you think happens next?")
+confidence = st.radio(f"How confident do you feel about this on a scale of 1(low) to 10(certain)?")
+responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
 # === Submit and Save ===
 if st.button("Submit All Responses"):
