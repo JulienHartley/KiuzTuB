@@ -2,7 +2,6 @@
 import streamlit as st
 import pandas as pd
 import os
-import random
 from datetime import datetime
 
 st.set_page_config(page_title="Comic Panel Experiment", layout="centered")
@@ -11,7 +10,6 @@ st.title("🧠 Comic Panel Experiment")
 # === Participant Info Form ===
 with st.form("participant_form"):
     st.write("### Tell us about yourself")
-    name = st.text_input("Your name or nickname:")
     age = st.text_input("Your age:")
     gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"])
     submit = st.form_submit_button("Start")
@@ -19,10 +17,22 @@ with st.form("participant_form"):
 if not submit:
     st.stop()
 
-test = 0
+# === decide on test type - if even numbered participant then test type = original ===
+with open("participant.txt", "r") as in_f:
+    try:
+        participant = int(in_f.readline())
+    except ValueError:
+        participant = 1
 
-# === Assign test type randomly (simulate counter logic) ===
-testtype = random.choice(["Original", "Updated"])
+    if participant % 2 == 0:
+        testtype = "Original"
+    else:
+        testtype = "Updated"
+# === now update the participant number ===
+participant = participant + 1
+with open("participant.txt", "w") as out_f:
+    out_f.write(str(participant))
+
 st.session_state["testtype"] = testtype
 st.success(f"🧪 You have been assigned to the **{testtype}** condition.")
 
@@ -55,14 +65,14 @@ for image_file in final_images:
 # === Submit and Save ===
 if st.button("Submit All Responses"):
     df = pd.DataFrame(responses)
-    df["name"] = name
+    df["participant"] = participant
     df["age"] = age
     df["gender"] = gender
     df["testtype"] = testtype
     df["timestamp"] = datetime.now().isoformat()
 
     # Save CSV
-    filename = f"response_{name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"response_{participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
     df.to_csv(filename, index=False)
 
     st.success("✅ Thank you! Your responses have been recorded.")
