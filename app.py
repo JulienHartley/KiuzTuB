@@ -26,9 +26,9 @@ with open(participant_file, "r", encoding="utf-8") as in_f:
         participant = 1
 
     if participant % 2 == 0:
-        testtype = "Original"
+        testtype = "Group A"
     else:
-        testtype = "Updated"
+        testtype = "Group B"
 # === now update the participant number ===
 participant = participant + 1
 with open("participant.txt", "w") as out_f:
@@ -40,13 +40,13 @@ st.success(f"🧪 You have been assigned to the **{testtype}** condition.")
 st.markdown("---")
 st.write("""
 Welcome to our experiment!  
-You’ll view a sequence of comic panels and answer two questions.  
+You’ll view a sequence of comic panels and will then be asked to answer two questions.  
 All responses are anonymous.  
 """)
 st.button("Continue")
 
 # === Load Images ===
-image_dir = "Images"
+image_folder = "Images"
 image_files1 = [f"panel{i}.png" for i in range(1, 8)]
 image_files2 = ["panel8.png", "panel9.png"]
 image_files3 = ["panel8_manipulated.png", "panel9_manipulated.png"]
@@ -58,9 +58,20 @@ st.markdown("---")
 # st.write("### Please view each panel and answer the question")
 
 # === Loop through each image ===
-for image_file in final_images:
-    st.image(os.path.join(image_dir, image_file))
-    st.button("Continue")
+# Initialize index in session state
+if "img_index" not in st.session_state:
+    st.session_state.img_index = 0
+
+# Show current image
+current_image = final_images[st.session_state.img_index]
+st.image(os.path.join(image_folder, current_image), caption=current_image, use_column_width=True)
+
+# Next button
+if st.button("Next"):
+    if st.session_state.img_index < len(image_files) - 1:
+        st.session_state.img_index += 1
+        current_image = final_images[st.session_state.img_index]
+        st.image(os.path.join(image_folder, current_image), caption=current_image, use_column_width=True)
 
 answer = st.radio(f"What do you think happens next?")
 confidence = st.radio(f"How confident do you feel about this on a scale of 1(low) to 10(certain)?")
