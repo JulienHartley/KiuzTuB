@@ -43,8 +43,8 @@ Welcome to our experiment!
 You’ll view a sequence of comic panels and will then be asked to answer two questions.  
 All responses are anonymous.  
 """)
-submit = st.button("Continue")
-if not submit:
+
+if not st.button("Continue"):
     st.stop()
 
 # === Load Images ===
