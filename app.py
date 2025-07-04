@@ -44,8 +44,9 @@ You’ll view a sequence of comic panels and will then be asked to answer two qu
 All responses are anonymous.  
 """)
 
-#if not st.button("Continue"):
-#   st.stop()
+proceed = st.form_submit_button("Continue")
+if not proceed:
+   st.stop()
 
 # === Load Images ===
 image_folder = "Images"
@@ -61,19 +62,22 @@ st.markdown("---")
 
 # === Loop through each image ===
 # Initialize index in session state
-st.session_state.img_index = 0
+img_index = 0
 
-# Show current image
-current_image = final_images[st.session_state.img_index]
+# Show first image
+current_image = final_images[img_index]
 st.image(os.path.join(image_folder, current_image), caption=current_image)
 
 # Next button
-if st.button("Next"):
-    if st.session_state.img_index < len(image_files) - 1:
-        st.session_state.img_index += 1
-        current_image = final_images[st.session_state.img_index]
+next = st.form_submit_button("Next")
+if next:
+    if img_index < len(image_files) - 1:
+        img_index += 1
+        current_image = final_images[img_index]
         st.image(os.path.join(image_folder, current_image), caption=current_image)
+        next = st.form_submit_button("Next")
 
+st.markdown("---")
 with st.form("response_form"):
     st.write("### Please type your responses to the questions below ")
     answer = st.text_input("What do you think happens next?")
@@ -83,18 +87,17 @@ with st.form("response_form"):
 
 responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
-# === Submit and Save ===
-if st.button("Submit All Responses"):
-    df = pd.DataFrame(responses)
-    df["participant"] = participant
-    df["age"] = age
-    df["gender"] = gender
-    df["testtype"] = testtype
-    df["timestamp"] = datetime.now().isoformat()
+# === Save ===
+df = pd.DataFrame(responses)
+df["participant"] = participant
+df["age"] = age
+df["gender"] = gender
+df["testtype"] = testtype
+df["timestamp"] = datetime.now().isoformat()
 
-    # Save CSV
-    filename = f"response_{participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-    df.to_csv(filename, index=False)
+# Save CSV
+filename = f"response_{participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+df.to_csv(filename, index=False)
 
-    st.success("✅ Thank you! Your responses have been recorded.")
-    st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
+st.success("✅ Thank you! Your responses have been recorded.")
+st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
