@@ -38,13 +38,14 @@ st.session_state["testtype"] = testtype
 st.success(f"🧪 You are participant **{participant}** and have been assigned to the **{testtype}** condition.")
 
 st.markdown("---")
-st.write("""
-Welcome to our experiment!  
-You’ll view a sequence of comic panels and will then be asked to answer two questions.  
-All responses are anonymous.  
-""")
+with st.form("instructions_form"):
+    st.write("""
+    Welcome to our experiment!  
+    You’ll view a sequence of comic panels and will then be asked to answer two questions.  
+    All responses are anonymous.  
+    """)
+    proceed = st.form_submit_button("Continue")
 
-proceed = st.form_submit_button("Continue")
 if not proceed:
    st.stop()
 
@@ -65,17 +66,19 @@ st.markdown("---")
 img_index = 0
 
 # Show first image
-current_image = final_images[img_index]
-st.image(os.path.join(image_folder, current_image), caption=current_image)
+with st.form("first_image"):
+    current_image = final_images[img_index]
+    st.image(os.path.join(image_folder, current_image), caption=current_image)
+    next = st.form_submit_button("Next")
 
-# Next button
-next = st.form_submit_button("Next")
 if next:
     if img_index < len(image_files) - 1:
         img_index += 1
         current_image = final_images[img_index]
-        st.image(os.path.join(image_folder, current_image), caption=current_image)
-        next = st.form_submit_button("Next")
+        form_key = "image" + str(img_index)
+        with st.form(form_key):
+            st.image(os.path.join(image_folder, current_image), caption=current_image)
+            next = st.form_submit_button("Next")
 
 st.markdown("---")
 with st.form("response_form"):
