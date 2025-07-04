@@ -44,8 +44,8 @@ You’ll view a sequence of comic panels and will then be asked to answer two qu
 All responses are anonymous.  
 """)
 
-if not st.button("Continue"):
-    st.stop()
+#if not st.button("Continue"):
+#   st.stop()
 
 # === Load Images ===
 image_folder = "Images"
