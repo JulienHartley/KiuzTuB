@@ -43,7 +43,9 @@ Welcome to our experiment!
 You’ll view a sequence of comic panels and will then be asked to answer two questions.  
 All responses are anonymous.  
 """)
-st.button("Continue")
+submit = st.button("Continue")
+if not submit:
+    st.stop()
 
 # === Load Images ===
 image_folder = "Images"
@@ -64,18 +66,22 @@ if "img_index" not in st.session_state:
 
 # Show current image
 current_image = final_images[st.session_state.img_index]
-st.image(os.path.join(image_folder, current_image), caption=current_image, use_column_width=True)
+st.image(os.path.join(image_folder, current_image), caption=current_image)
 
 # Next button
 if st.button("Next"):
     if st.session_state.img_index < len(image_files) - 1:
         st.session_state.img_index += 1
         current_image = final_images[st.session_state.img_index]
-        st.image(os.path.join(image_folder, current_image), caption=current_image, use_column_width=True)
+        st.image(os.path.join(image_folder, current_image), caption=current_image)
 
-answer = st.radio(f"What do you think happens next?")
-confidence = st.radio(f"How confident do you feel about this on a scale of 1(low) to 10(certain)?")
-responses.append({"participant":participant, "response": answer, "confidence": confidence})
+with st.form("response_form"):
+    st.write("### Please type your responses to the questions below ")
+    age = st.text_input("Your age:")
+    answer = st.text_input("What do you think happens next?")
+    confidence = st.radio("How confident do you feel about this on a scale of 1(low) to 10(certain)?",
+                          ["1","2","3","4","5","6","7","8","9","10"])
+    responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
 # === Submit and Save ===
 if st.button("Submit All Responses"):
