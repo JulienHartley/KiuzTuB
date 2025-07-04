@@ -35,7 +35,7 @@ with open("participant.txt", "w") as out_f:
     out_f.write(str(participant))
 
 st.session_state["testtype"] = testtype
-st.success(f"🧪 You have been assigned to the **{testtype}** condition.")
+st.success(f"🧪 You are participant **{participant}** and have been assigned to the **{testtype}** condition.")
 
 st.markdown("---")
 st.write("""
@@ -61,8 +61,7 @@ st.markdown("---")
 
 # === Loop through each image ===
 # Initialize index in session state
-if "img_index" not in st.session_state:
-    st.session_state.img_index = 0
+st.session_state.img_index = 0
 
 # Show current image
 current_image = final_images[st.session_state.img_index]
@@ -77,11 +76,12 @@ if st.button("Next"):
 
 with st.form("response_form"):
     st.write("### Please type your responses to the questions below ")
-    age = st.text_input("Your age:")
     answer = st.text_input("What do you think happens next?")
     confidence = st.radio("How confident do you feel about this on a scale of 1(low) to 10(certain)?",
                           ["1","2","3","4","5","6","7","8","9","10"])
-    responses.append({"participant":participant, "response": answer, "confidence": confidence})
+    submit = st.form_submit_button("Submit")
+
+responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
 # === Submit and Save ===
 if st.button("Submit All Responses"):
