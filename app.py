@@ -15,9 +15,8 @@ if "age" not in st.session_state:
         st.session_state.age = st.text_input("Your age:")
         st.session_state.gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"])
         submit = st.form_submit_button("Start")
-
-if not submit:
-    st.stop()
+        if not submit:
+            st.stop()
 
 # === decide on test type - if even numbered participant then test type = original ===
 if "participant" not in st.session_state:
@@ -47,9 +46,8 @@ if "proceed" not in st.session_state:
         All responses are anonymous.  
         """)
         st.session_state.proceed = st.form_submit_button("Continue")
-
-if not st.session_state.proceed:
-    st.stop()
+        if not st.session_state.proceed:
+            st.stop()
 
 # === Load Images ===
 image_folder = "Images"
@@ -73,6 +71,8 @@ if "image1" not in st.session_state:
         st.image(os.path.join(image_folder, current_image), caption=current_image)
         st.session_state.image1 = current_image
         next_image = st.form_submit_button("Next")
+        if not next_image:
+            st.stop()
 
 # if next:
 #   if img_index < len(image_files) - 1:
