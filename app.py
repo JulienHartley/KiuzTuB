@@ -1,6 +1,7 @@
 
 import streamlit as st
 import pandas as pd
+import csv
 import os
 from datetime import datetime
 
@@ -37,7 +38,6 @@ with open("participant.txt", "w") as out_f:
 st.session_state["testtype"] = testtype
 st.success(f"🧪 You are participant **{participant}** and have been assigned to the **{testtype}** condition.")
 
-st.markdown("---")
 with st.form("instructions_form"):
     st.write("""
     Welcome to our experiment!  
@@ -58,7 +58,6 @@ final_images = image_files1 + (image_files2 if testtype == "Original" else image
 
 responses = []
 
-st.markdown("---")
 # st.write("### Please view each panel and answer the question")
 
 # === Loop through each image ===
@@ -80,7 +79,7 @@ with st.form("first_image"):
 #           st.image(os.path.join(image_folder, current_image), caption=current_image)
 #           next = st.form_submit_button("Next")
 
-st.markdown("---")
+
 with st.form("response_form"):
     st.write("### Please type your responses to the questions below ")
     answer = st.text_input("What do you think happens next?")
@@ -88,19 +87,31 @@ with st.form("response_form"):
                           ["1","2","3","4","5","6","7","8","9","10"])
     submit = st.form_submit_button("Submit")
 
-responses.append({"participant":participant, "response": answer, "confidence": confidence})
+# === appends user's answers to responses array
+#responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
 # === Save ===
-df = pd.DataFrame(responses)
-df["participant"] = participant
-df["age"] = age
-df["gender"] = gender
-df["testtype"] = testtype
-df["timestamp"] = datetime.now().isoformat()
+#df = pd.DataFrame(responses)
+#df["participant"] = participant
+#df["age"] = age
+#df["gender"] = gender
+#df["testtype"] = testtype
+#df["timestamp"] = datetime.now().isoformat()
 
-# Save CSV
+# === Save CSV
 filename = f"response_{participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-df.to_csv(filename, index=False)
+with open(filename, "w", encoding="utf-8") as out_f:
+    writer = csv.writer(out_f)
+    writer.writerow([
+    'Participant',
+    'Age',
+    'Gender',
+    'Test type',
+    'Answer',
+    'Confidence'
+    ])
+    writer.writerow([participant,age,gender,testtype,answer,confidence])
+#    df.to_csv(filename, index=False)
 
 st.success("✅ Thank you! Your responses have been recorded.")
 st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
