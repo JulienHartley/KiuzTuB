@@ -32,7 +32,7 @@ if "participant" not in st.session_state:
             testtype = "Group B"
     # === now update the participant number ===
     participant = participant + 1
-    with open("participant.txt", "w") as out_f:
+    with open(participant_file, "w", encoding="utf-8") as out_f:
         out_f.write(str(participant))
     st.session_state.participant = participant
     st.session_state.testtype = testtype
@@ -91,6 +91,8 @@ if "answer" not in st.session_state:
             "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
         submit = st.form_submit_button("Submit")
+        if not submit:
+            st.stop()
 
 # === appends user's answers to responses array
 # responses.append({"participant":participant, "response": answer, "confidence": confidence})
@@ -102,6 +104,10 @@ if "answer" not in st.session_state:
 # df["gender"] = gender
 # df["testtype"] = testtype
 # df["timestamp"] = datetime.now().isoformat()
+
+st.write(st.session_state.participant, st.session_state.age,
+        st.session_state.gender, st.session_state.testtype,
+        st.session_state.answer, st.session_state.confidence)
 
 # === Save CSV
 filename = f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
@@ -120,5 +126,5 @@ with open(filename, "w", encoding="utf-8") as out_f:
                      st.session_state.answer, st.session_state.confidence])
 #    df.to_csv(filename, index=False)
 
-st.success("✅ Thank you! Your responses have been recorded.")
+st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
 # st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
