@@ -1,6 +1,6 @@
 
 import streamlit as st
-import pandas as pd
+# import pandas as pd
 import csv
 import os
 from datetime import datetime
@@ -47,7 +47,7 @@ with st.form("instructions_form"):
     proceed = st.form_submit_button("Continue")
 
 if not proceed:
-   st.stop()
+    st.stop()
 
 # === Load Images ===
 image_folder = "Images"
@@ -68,11 +68,11 @@ img_index = 0
 with st.form("first_image"):
     current_image = final_images[img_index]
     st.image(os.path.join(image_folder, current_image), caption=current_image)
-    next = st.form_submit_button("Next")
+    next_image = st.form_submit_button("Next")
 
-#if next:
+# if next:
 #   if img_index < len(image_files) - 1:
-#        img_index += 1
+#       img_index += 1
 #       current_image = final_images[img_index]
 #       form_key = "image" + str(img_index)
 #       with st.form(form_key):
@@ -84,19 +84,19 @@ with st.form("response_form"):
     st.write("### Please type your responses to the questions below ")
     answer = st.text_input("What do you think happens next?")
     confidence = st.radio("How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-                          ["1","2","3","4","5","6","7","8","9","10"])
+                          ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
     submit = st.form_submit_button("Submit")
 
 # === appends user's answers to responses array
-#responses.append({"participant":participant, "response": answer, "confidence": confidence})
+# responses.append({"participant":participant, "response": answer, "confidence": confidence})
 
 # === Save ===
-#df = pd.DataFrame(responses)
-#df["participant"] = participant
-#df["age"] = age
-#df["gender"] = gender
-#df["testtype"] = testtype
-#df["timestamp"] = datetime.now().isoformat()
+# df = pd.DataFrame(responses)
+# df["participant"] = participant
+# df["age"] = age
+# df["gender"] = gender
+# df["testtype"] = testtype
+# df["timestamp"] = datetime.now().isoformat()
 
 # === Save CSV
 filename = f"response_{participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
@@ -110,8 +110,8 @@ with open(filename, "w", encoding="utf-8") as out_f:
     'Answer',
     'Confidence'
     ])
-    writer.writerow([participant,age,gender,testtype,answer,confidence])
+    writer.writerow([participant, age, gender, testtype, answer, confidence])
 #    df.to_csv(filename, index=False)
 
 st.success("✅ Thank you! Your responses have been recorded.")
-st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
+#st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
