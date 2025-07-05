@@ -71,14 +71,14 @@ with st.form("first_image"):
     st.image(os.path.join(image_folder, current_image), caption=current_image)
     next = st.form_submit_button("Next")
 
-if next:
-    if img_index < len(image_files) - 1:
-        img_index += 1
-        current_image = final_images[img_index]
-        form_key = "image" + str(img_index)
-        with st.form(form_key):
-            st.image(os.path.join(image_folder, current_image), caption=current_image)
-            next = st.form_submit_button("Next")
+#if next:
+#   if img_index < len(image_files) - 1:
+#        img_index += 1
+#       current_image = final_images[img_index]
+#       form_key = "image" + str(img_index)
+#       with st.form(form_key):
+#           st.image(os.path.join(image_folder, current_image), caption=current_image)
+#           next = st.form_submit_button("Next")
 
 st.markdown("---")
 with st.form("response_form"):
