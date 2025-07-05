@@ -54,7 +54,7 @@ image_folder = "Images"
 image_files1 = [f"panel{i}.png" for i in range(1, 8)]
 image_files2 = ["panel8.png", "panel9.png"]
 image_files3 = ["panel8_manipulated.png", "panel9_manipulated.png"]
-final_images = image_files1 + (image_files2 if testtype == "Original" else image_files3)
+final_images = image_files1 + (image_files2 if st.session_state.testtype == "Group A" else image_files3)
 
 responses = []
 
