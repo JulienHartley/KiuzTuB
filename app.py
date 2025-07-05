@@ -1,4 +1,3 @@
-
 import streamlit as st
 # import pandas as pd
 import csv
@@ -105,9 +104,9 @@ if "answer" not in st.session_state:
 # df["testtype"] = testtype
 # df["timestamp"] = datetime.now().isoformat()
 
-st.write(st.session_state.participant, st.session_state.age,
-        st.session_state.gender, st.session_state.testtype,
-        st.session_state.answer, st.session_state.confidence)
+st.write("partipant ", st.session_state.participant, "age ", st.session_state.age)
+st.write("gender ", st.session_state.gender, st.session_state.testtype)
+st.write("answer ", st.session_state.answer, st.session_state.confidence)
 
 # === Save CSV
 filename = f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
@@ -119,8 +118,7 @@ with open(filename, "w", encoding="utf-8") as out_f:
         'Gender',
         'Test type',
         'Answer',
-        'Confidence'
-        ])
+        'Confidence'])
     writer.writerow([st.session_state.participant, st.session_state.age,
                      st.session_state.gender, st.session_state.testtype,
                      st.session_state.answer, st.session_state.confidence])
