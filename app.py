@@ -13,6 +13,7 @@ if "age" not in st.session_state:
         st.write("### Tell us about yourself")
         st.session_state.age = st.text_input("Your age:")
         st.session_state.gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"])
+        st.write(st.session_state.age)
         submit = st.form_submit_button("Start")
         if not submit:
             st.stop()
@@ -23,6 +24,7 @@ if "participant" not in st.session_state:
     with open(participant_file, "r", encoding="utf-8") as in_f:
         try:
             participant = int(in_f.readline())
+            st.write("participant from file", participant)
         except ValueError:
             participant = 1
         if participant % 2 == 0:
@@ -31,6 +33,7 @@ if "participant" not in st.session_state:
             testtype = "Group B"
     # === now update the participant number ===
     participant = participant + 1
+    st.write("this participant", participant)
     with open(participant_file, "w", encoding="utf-8") as out_f:
         out_f.write(str(participant))
     st.session_state.participant = participant
@@ -45,29 +48,33 @@ if "proceed" not in st.session_state:
         All responses are anonymous.  
         """)
         st.session_state.proceed = st.form_submit_button("Continue")
+        st.write("participant after instructions ", st.session_state.participant)
         if not st.session_state.proceed:
             st.stop()
 
 # === Load Images ===
-image_folder = "Images"
-image_files1 = [f"panel{i}.png" for i in range(1, 8)]
-image_files2 = ["panel8.png", "panel9.png"]
-image_files3 = ["panel8_manipulated.png", "panel9_manipulated.png"]
-final_images = image_files1 + (image_files2 if st.session_state.testtype == "Group A" else image_files3)
+if "final_images" not in st.session_state:
+    image_files1 = [f"panel{i}.png" for i in range(1, 8)]
+    image_files2 = ["panel8.png", "panel9.png"]
+    image_files3 = ["panel8_manipulated.png", "panel9_manipulated.png"]
+    if st.session_state.testtype == "Group A":
+        st.session_state.final_images = image_files1 + image_files2
+    else:
+        st.session_state.final_images = image_files1 + image_files3
 
-responses = []
+    responses = []
 
 # st.write("### Please view each panel and answer the question")
 
 # === Loop through each image ===
 # Initialize index in session state
-img_index = 0
+st.session_state.img_index = 0
 
 # Show first image
 if "image1" not in st.session_state:
     with st.form("first_image"):
-        current_image = final_images[img_index]
-        st.image(os.path.join(image_folder, current_image), caption=current_image)
+        current_image = st.session_state.final_images[st.session_state.img_index]
+        st.image(os.path.join("Images", current_image), caption=current_image)
         st.session_state.image1 = current_image
         next_image = st.form_submit_button("Next")
         if not next_image:
@@ -104,7 +111,7 @@ if "answer" not in st.session_state:
 # df["testtype"] = testtype
 # df["timestamp"] = datetime.now().isoformat()
 
-st.write("partipant ", st.session_state.participant, "age ", st.session_state.age)
+st.write("participant ", st.session_state.participant, "age ", st.session_state.age)
 st.write("gender ", st.session_state.gender, st.session_state.testtype)
 st.write("answer ", st.session_state.answer, st.session_state.confidence)
 
