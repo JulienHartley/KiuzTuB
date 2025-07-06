@@ -109,7 +109,7 @@ if "answer" in st.session_state:
     branch = "main"
 
     # === Save CSV
-    filename = f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = "Results/" + f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 # ........
     api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
     output_array = [str(st.session_state.participant),
@@ -138,23 +138,44 @@ if "answer" in st.session_state:
         st.success("File created successfully!")
     else:
         st.error(f"Error: {response.status_code} - {response.json()}")
-# ..........
+# Now update participant.txt
+if "participant" in st.session_state:
+    filename = "participant.txt"
+    output_record = str(st.session_state.participant)
+    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
-#    with open(filename, "w", encoding="utf-8") as out_f:
-#       writer = csv.writer(out_f)
-#       writer.writerow([
-#           'Participant',
-#           'Age',
-#           'Gender',
-#           'Test type',
-#           'Answer',
-#           'Confidence'])
-#       writer.writerow([st.session_state.participant, st.session_state.age,
-#                        st.session_state.gender, st.session_state.testtype,
-#                        st.session_state.answer, st.session_state.confidence])
-#   # === update participant number in participant.txt
-#   with open("participant.txt", "w", encoding="utf-8") as out_f:
-#       out_f.write(str(st.session_state.participant))
+    # My GitHub info
+    token = st.secrets["github"]["token"]
+    repo = "JulienHartley/KiuzTuB"
+    branch = "main"
+
+    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    response = requests.get(api_url, headers=headers)
+    if response.status_code == 200:
+        file_info = response.json()
+        sha = file_info["sha"]
+    else:
+        st.error(f"Failed to fetch file info: {response.status_code}")
+        st.stop()
+
+    update_payload = {
+        "content": encoded_content,
+        "sha": sha,
+        "branch": branch
+    }
+
+    update_response = requests.put(api_url, headers=headers, json=update_payload)
+
+    if update_response.status_code == 200:
+        st.success("✅ File updated successfully!")
+    else:
+        st.error(f"❌ Update failed: {update_response.status_code}")
+        st.json(update_response.json())
 
 st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
-# st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
