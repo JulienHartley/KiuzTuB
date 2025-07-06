@@ -140,7 +140,7 @@ if "answer" in st.session_state:
         st.error(f"Error: {response.status_code} - {response.json()}")
 # Now update participant.txt
 if "participant" in st.session_state:
-    filename = "participant.txt"
+    filename = "Participant.txt"
     output_record = str(st.session_state.participant)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
