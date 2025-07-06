@@ -1,9 +1,8 @@
 import streamlit as st
 # import pandas as pd
-import csv
 import os
-import base64 # to enable writing to Github repo
-import requests # ditto
+import base64  # to enable writing to GitHub repo
+# import requests  # ditto
 
 from datetime import datetime
 
@@ -16,7 +15,7 @@ if "age" not in st.session_state:
         st.write("### Tell us about yourself")
         age = st.text_input("Your age:", key="age")
         gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"], key="gender")
-        submit = st.form_submit_button(label="Start", on_click=form_callback)
+        submit = st.form_submit_button(label="Start")
         if not submit:
             st.stop()
         st.write(st.session_state.age, st.session_state.gender)
@@ -91,10 +90,10 @@ if "image1" not in st.session_state:
 if "answer" not in st.session_state:
     with st.form("response_form"):
         st.write("### Please type your responses to the questions below ")
-        st.session_state.answer = st.text_input("What do you think happens next?")
-        st.session_state.confidence = st.radio(
+        answer = st.text_input("What do you think happens next?", key="answer")
+        confidence = st.selectbox(
             "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
-            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"])
+            ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence")
         submit = st.form_submit_button("Submit")
         st.write(st.session_state.answer, st.session_state.confidence)
         if not submit:
@@ -105,20 +104,23 @@ st.write("participant ", st.session_state.participant, "age ", st.session_state.
 st.write("gender ", st.session_state.gender, "type ", st.session_state.testtype)
 st.write("answer ", st.session_state.answer, "confidence ", st.session_state.confidence)
 # ------------------
-# === Now need to write to Github files
-if "answer" in st.session_status:
+# === Now need to write to GitHub files
+if "answer" in st.session_state:
 
     # My GitHub info
-    token = "YOUR_GITHUB_TOKEN"
+    token = st.secrets["github"]["token"]
     repo = "JulienHartley/KiuzTuB"
     branch = "main"
 
     # === Save CSV
     filename = f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-    path = f"{filename}"
 # ........
-    api_url = f"https://api.github.com/repos/{repo}/contents/{path}"
-    encoded_content = base64.b64encode(content.encode()).decode()
+    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
+    output_array = [st.session_state.participant, st.session_state.age,
+                    st.session_state.gender, st.session_state.testtype,
+                    st.session_state.answer, st.session_state.confidence]
+    output_record = ",".join(output_array)
+    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
     headers = {
         "Authorization": f"token {token}",
@@ -139,24 +141,21 @@ if "answer" in st.session_status:
         st.error(f"Error: {response.status_code} - {response.json()}")
 # ..........
 
-
-
-
-    with open(filename, "w", encoding="utf-8") as out_f:
-        writer = csv.writer(out_f)
-        writer.writerow([
-            'Participant',
-            'Age',
-            'Gender',
-            'Test type',
-            'Answer',
-            'Confidence'])
-        writer.writerow([st.session_state.participant, st.session_state.age,
-                         st.session_state.gender, st.session_state.testtype,
-                         st.session_state.answer, st.session_state.confidence])
-    # === update participant number in participant.txt
-    with open("participant.txt", "w", encoding="utf-8") as out_f:
-        out_f.write(str(st.session_state.participant))
+#    with open(filename, "w", encoding="utf-8") as out_f:
+#       writer = csv.writer(out_f)
+#       writer.writerow([
+#           'Participant',
+#           'Age',
+#           'Gender',
+#           'Test type',
+#           'Answer',
+#           'Confidence'])
+#       writer.writerow([st.session_state.participant, st.session_state.age,
+#                        st.session_state.gender, st.session_state.testtype,
+#                        st.session_state.answer, st.session_state.confidence])
+#   # === update participant number in participant.txt
+#   with open("participant.txt", "w", encoding="utf-8") as out_f:
+#       out_f.write(str(st.session_state.participant))
 
 st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
 # st.download_button("Download your CSV", data=df.to_csv(index=False).encode(), file_name=filename, mime="text/csv")
