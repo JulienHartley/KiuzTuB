@@ -18,7 +18,6 @@ if "age" not in st.session_state:
         submit = st.form_submit_button(label="Start")
         if not submit:
             st.stop()
-        st.write(st.session_state.age, st.session_state.gender)
 
 # === decide on test type - if even numbered participant then test type = original ===
 if "participant" not in st.session_state:
@@ -35,7 +34,6 @@ if "participant" not in st.session_state:
             testtype = "Group B"
     # === now update the participant number ===
     participant = participant + 1
-    st.write("this participant", participant)
     st.session_state.participant = participant
     st.session_state.testtype = testtype
     st.success(f"🧪 You are participant **{participant}** and have been assigned to the **{testtype}** condition.")
@@ -48,7 +46,6 @@ if "proceed" not in st.session_state:
         All responses are anonymous.  
         """)
         st.session_state.proceed = st.form_submit_button("Continue")
-        st.write("participant after instructions ", st.session_state.participant)
         if not st.session_state.proceed:
             st.stop()
 
@@ -95,7 +92,6 @@ if "answer" not in st.session_state:
             "How confident do you feel about this on a scale of 1(low) to 10(certain)?",
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], key="confidence")
         submit = st.form_submit_button("Submit")
-        st.write(st.session_state.answer, st.session_state.confidence)
         if not submit:
             st.stop()
 
@@ -116,9 +112,12 @@ if "answer" in st.session_state:
     filename = f"response_{st.session_state.participant}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
 # ........
     api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
-    output_array = [st.session_state.participant, st.session_state.age,
-                    st.session_state.gender, st.session_state.testtype,
-                    st.session_state.answer, st.session_state.confidence]
+    output_array = [str(st.session_state.participant),
+                    str(st.session_state.age),
+                    st.session_state.gender,
+                    st.session_state.testtype,
+                    st.session_state.answer,
+                    str(st.session_state.confidence)]
     output_record = ",".join(output_array)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
