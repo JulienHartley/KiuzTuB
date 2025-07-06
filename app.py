@@ -2,7 +2,7 @@ import streamlit as st
 # import pandas as pd
 import os
 import base64  # to enable writing to GitHub repo
-# import requests  # ditto
+import requests  # ditto
 
 from datetime import datetime
 
