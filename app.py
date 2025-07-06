@@ -165,6 +165,7 @@ if "participant" in st.session_state:
         st.stop()
 
     update_payload = {
+        "message": "Update file via Streamlit",
         "content": encoded_content,
         "sha": sha,
         "branch": branch
