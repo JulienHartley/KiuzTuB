@@ -63,26 +63,22 @@ if "final_images" not in st.session_state:
 
 # === Loop through each image ===
 # Initialize index in session state
-st.session_state.img_index = 0
+if "img_index" not in st.session_state:
+    st.session_state.img_index = 0
+
+panel_number = st.session_state.img_index + 1
+panel_number_str = str(panel_number)
 
 # Show first image
-if "image1" not in st.session_state:
-    with st.form("first_image"):
-        current_image = st.session_state.final_images[st.session_state.img_index]
-        st.image(os.path.join("Images", current_image), caption=current_image)
-        st.session_state.image1 = current_image
-        next_image = st.form_submit_button("Next")
-        if not next_image:
-            st.stop()
-
-# if next:
-#   if img_index < len(image_files) - 1:
-#       img_index += 1
-#       current_image = final_images[img_index]
-#       form_key = "image" + str(img_index)
-#       with st.form(form_key):
-#           st.image(os.path.join(image_folder, current_image), caption=current_image)
-#           next = st.form_submit_button("Next")
+if "img_index" in st.session_state:
+    if st.session_state.img_index < 9:
+        with st.form(f"image_{panel_number_str}"):
+            current_image = st.session_state.final_images[st.session_state.img_index]
+            st.image(os.path.join("Images", current_image), caption=current_image)
+            st.session_state.img_index += 1
+            next_image = st.form_submit_button("Next")
+            if not next_image:
+                st.stop()
 
 if "answer" not in st.session_state:
     with st.form("response_form"):
@@ -96,9 +92,9 @@ if "answer" not in st.session_state:
             st.stop()
 
 # -----------------
-st.write("participant ", st.session_state.participant, "age ", st.session_state.age)
-st.write("gender ", st.session_state.gender, "type ", st.session_state.testtype)
-st.write("answer ", st.session_state.answer, "confidence ", st.session_state.confidence)
+# st.write("participant ", st.session_state.participant, "age ", st.session_state.age)
+# st.write("gender ", st.session_state.gender, "type ", st.session_state.testtype)
+# st.write("answer ", st.session_state.answer, "confidence ", st.session_state.confidence)
 # ------------------
 # === Now need to write to GitHub files
 if "answer" in st.session_state:
