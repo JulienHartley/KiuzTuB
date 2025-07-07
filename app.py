@@ -36,13 +36,15 @@ if "participant" not in st.session_state:
     participant = participant + 1
     st.session_state.participant = participant
     st.session_state.testtype = testtype
-    st.success(f"🧪 You are participant **{participant}** and have been assigned to the **{testtype}** condition.")
+    st.success(f"🧪 You are participant **{participant}**.")
 
 if "proceed" not in st.session_state:
     with st.form("instructions_form"):
         st.write("""
         Welcome to our experiment!  
         You’ll view a sequence of comic panels and will then be asked to answer two questions.  
+        Please read each panel and then press next to display the next one. You cannot go back.
+        
         All responses are anonymous.  
         """)
         st.session_state.proceed = st.form_submit_button("Continue")
