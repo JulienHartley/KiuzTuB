@@ -39,7 +39,7 @@ if "participant" not in st.session_state:
     st.success(f"🧪 You are participant **{participant}**.")
 
 # Now update participant.txt
-if "participant" in st.session_state:
+if "participant_updated" not in st.session_state:
     filename = "Participant.txt"
     output_record = str(st.session_state.participant)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
@@ -72,6 +72,7 @@ if "participant" in st.session_state:
     }
 
     update_response = requests.put(api_url, headers=headers, json=update_payload)
+    st.session_state.participant_updated = "yes"
 
 if "proceed" not in st.session_state:
     with st.form("instructions_form"):
