@@ -13,8 +13,8 @@ st.title("🧠 Comic Panel Experiment")
 if "age" not in st.session_state:
     with st.form("participant_form"):
         st.write("### Tell us about yourself")
-        age = st.text_input("Your age:", key="age")
         gender = st.selectbox("Gender:", ["Prefer not to say", "Female", "Male", "Other"], key="gender")
+        age = st.text_input("Your age:", key="age")
         submit = st.form_submit_button(label="Start")
         if not submit:
             st.stop()
@@ -37,6 +37,41 @@ if "participant" not in st.session_state:
     st.session_state.participant = participant
     st.session_state.testtype = testtype
     st.success(f"🧪 You are participant **{participant}**.")
+
+# Now update participant.txt
+if "participant" in st.session_state:
+    filename = "Participant.txt"
+    output_record = str(st.session_state.participant)
+    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
+
+    # My GitHub info
+    token = st.secrets["github"]["token"]
+    repo = "JulienHartley/KiuzTuB"
+    branch = "main"
+
+    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
+
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json"
+    }
+
+    response = requests.get(api_url, headers=headers)
+    if response.status_code == 200:
+        file_info = response.json()
+        sha = file_info["sha"]
+    else:
+        st.error(f"Failed to fetch file info: {response.status_code}")
+        st.stop()
+
+    update_payload = {
+        "message": "Update file via Streamlit",
+        "content": encoded_content,
+        "sha": sha,
+        "branch": branch
+    }
+
+    update_response = requests.put(api_url, headers=headers, json=update_payload)
 
 if "proceed" not in st.session_state:
     with st.form("instructions_form"):
@@ -76,7 +111,7 @@ if "img_index" in st.session_state:
     if st.session_state.img_index < 9:
         with st.form(f"image_{panel_number_str}"):
             current_image = st.session_state.final_images[st.session_state.img_index]
-            st.image(os.path.join("Images", current_image), caption=current_image)
+            st.image(os.path.join("Images", current_image))
             st.session_state.img_index += 1
             next_image = st.form_submit_button("Next")
             if not next_image:
@@ -84,7 +119,7 @@ if "img_index" in st.session_state:
 
 if "answer" not in st.session_state:
     with st.form("response_form"):
-        st.write("### Please type your responses to the questions below ")
+        st.write("### Please type your responses to the question below ")
         answer = st.text_input("What do you think happens next?", key="answer")
         submit = st.form_submit_button("Submit")
         if not submit:
@@ -142,45 +177,12 @@ if "answer" in st.session_state:
         st.success("File created successfully!")
     else:
         st.error(f"Error: {response.status_code} - {response.json()}")
-# Now update participant.txt
-if "participant" in st.session_state:
-    filename = "Participant.txt"
-    output_record = str(st.session_state.participant)
-    encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
-    # My GitHub info
-    token = st.secrets["github"]["token"]
-    repo = "JulienHartley/KiuzTuB"
-    branch = "main"
 
-    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
-
-    headers = {
-        "Authorization": f"token {token}",
-        "Accept": "application/vnd.github+json"
-    }
-
-    response = requests.get(api_url, headers=headers)
-    if response.status_code == 200:
-        file_info = response.json()
-        sha = file_info["sha"]
-    else:
-        st.error(f"Failed to fetch file info: {response.status_code}")
-        st.stop()
-
-    update_payload = {
-        "message": "Update file via Streamlit",
-        "content": encoded_content,
-        "sha": sha,
-        "branch": branch
-    }
-
-    update_response = requests.put(api_url, headers=headers, json=update_payload)
-
-    if update_response.status_code == 200:
-        st.success("✅ File updated successfully!")
-    else:
-        st.error(f"❌ Update failed: {update_response.status_code}")
-        st.json(update_response.json())
+#    if update_response.status_code == 200:
+#        st.success("✅ File updated successfully!")
+#    else:
+#        st.error(f"❌ Update failed: {update_response.status_code}")
+#        st.json(update_response.json())
 
 st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
