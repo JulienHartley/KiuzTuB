@@ -35,7 +35,7 @@ if "participant" not in st.session_state:
     # === now update the participant number ===
     participant = participant + 1
     st.session_state.participant = participant
-    st.session_state.testtype = testtype
+    st.session_state.testtype = "Group A"
     st.success(f"🧪 You are participant **{participant}**.")
 
 # Now update participant.txt
