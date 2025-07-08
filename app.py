@@ -25,7 +25,6 @@ if "participant" not in st.session_state:
     with open(participant_file, "r", encoding="utf-8") as in_f:
         try:
             participant = int(in_f.readline())
-            st.write("participant from file", participant)
         except ValueError:
             participant = 1
         if participant % 2 == 0:
@@ -72,6 +71,11 @@ if "participant_updated" not in st.session_state:
     }
 
     update_response = requests.put(api_url, headers=headers, json=update_payload)
+    if update_response.status_code == 200:
+        st.success("✅ File updated successfully!")
+    else:
+        st.error(f"❌ Update failed: {update_response.status_code}")
+        st.json(update_response.json())
     st.session_state.participant_updated = "yes"
 
 if "proceed" not in st.session_state:
@@ -179,11 +183,5 @@ if "answer" in st.session_state:
     else:
         st.error(f"Error: {response.status_code} - {response.json()}")
 
-
-#    if update_response.status_code == 200:
-#        st.success("✅ File updated successfully!")
-#    else:
-#        st.error(f"❌ Update failed: {update_response.status_code}")
-#        st.json(update_response.json())
 
 st.success("✅ Thank you! Your responses have been recorded. You may close this browser window")
