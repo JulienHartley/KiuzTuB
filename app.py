@@ -34,13 +34,10 @@ if "participant" not in st.session_state:
     # === now update the participant number ===
     participant = participant + 1
     st.session_state.participant = participant
-    st.session_state.testtype = "Group A"
-    st.success(f"🧪 You are participant **{participant}**.")
+    st.session_state.testtype = testtype
 
-# Now update participant.txt
-if "participant_updated" not in st.session_state:
-    filename = "Participant.txt"
-    output_record = str(st.session_state.participant)
+# Now update the Participant.txt
+    output_record = str(participant)
     encoded_content = base64.b64encode(output_record.encode("utf-8")).decode("utf-8")
 
     # My GitHub info
@@ -48,7 +45,7 @@ if "participant_updated" not in st.session_state:
     repo = "JulienHartley/KiuzTuB"
     branch = "main"
 
-    api_url = f"https://api.github.com/repos/{repo}/contents/{filename}"
+    api_url = f"https://api.github.com/repos/{repo}/contents/{participant_file}"
 
     headers = {
         "Authorization": f"token {token}",
@@ -64,7 +61,7 @@ if "participant_updated" not in st.session_state:
         st.stop()
 
     update_payload = {
-        "message": "Update file via Streamlit",
+        "message": f"Update file via Streamlit {st.session_state.participant}",
         "content": encoded_content,
         "sha": sha,
         "branch": branch
@@ -76,7 +73,8 @@ if "participant_updated" not in st.session_state:
     else:
         st.error(f"❌ Update failed: {update_response.status_code}")
         st.json(update_response.json())
-    st.session_state.participant_updated = "yes"
+
+    st.success(f"🧪 You are participant **{participant}**.")
 
 if "proceed" not in st.session_state:
     with st.form("instructions_form"):
