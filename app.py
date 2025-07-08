@@ -3,6 +3,7 @@ import streamlit as st
 import os
 import base64  # to enable writing to GitHub repo
 import requests  # ditto
+import random
 
 from datetime import datetime
 
@@ -27,10 +28,11 @@ if "participant" not in st.session_state:
             participant = int(in_f.readline())
         except ValueError:
             participant = 1
-        if participant % 2 == 0:
-            testtype = "Group A"
-        else:
-            testtype = "Group B"
+    num = random.randint(1, 10)  # includes both 1 and 10
+    if num % 2 == 0:
+        testtype = "Group A"
+    else:
+        testtype = "Group B"
     # === now update the participant number ===
     participant = participant + 1
     st.session_state.participant = participant
